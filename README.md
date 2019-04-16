@@ -125,6 +125,18 @@ dnf -y install qemu libvirt libvirt-devel ruby-devel gcc
 pacman -S vagrant
 ```
 
+* MacOS (Mojave)
+
+TODO: Test on other versions of MacOS
+
+Install dependencies via [Homebrew](https://brew.sh/)
+
+```shell
+brew install qemu libvirt libiconv
+brew services start libvirt
+export CONFIGURE_ARGS='with-ldflags=-L/usr/local/opt/libiconv/lib with-libvirt-include=/usr/local/opt/libiconv/include with-libvirt-lib=/usr/lib'
+```
+
 Now you're ready to install vagrant-libvirt using standard [Vagrant
 plugin](http://docs.vagrantup.com/v2/plugins/usage.html) installation methods.
 
