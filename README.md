@@ -16,7 +16,7 @@ can help a lot :-)
 
 - [Features](#features)
 - [Future work](#future-work)
-- [Installation](#installation)
+- [Installation](#installation) 
   - [Possible problems with plugin installation on Linux](#possible-problems-with-plugin-installation-on-linux)
 - [Vagrant Project Preparation](#vagrant-project-preparation)
   - [Add Box](#add-box)
@@ -133,8 +133,13 @@ Install dependencies via [Homebrew](https://brew.sh/)
 
 ```shell
 brew install qemu libvirt libiconv
+```
+Uncomment this line in `/usr/local/etc/libvirt/libvirtd.conf`:
+```
+unix_sock_dir = "/usr/local/var/run/libvirt"
+```
+```shell
 brew services start libvirt
-export CONFIGURE_ARGS='with-ldflags=-L/usr/local/opt/libiconv/lib with-libvirt-include=/usr/local/opt/libiconv/include with-libvirt-lib=/usr/lib'
 ```
 
 Now you're ready to install vagrant-libvirt using standard [Vagrant
