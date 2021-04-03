@@ -134,12 +134,26 @@ Install dependencies via [Homebrew](https://brew.sh/)
 ```shell
 brew install qemu libvirt libiconv
 ```
-Uncomment this line in `/usr/local/etc/libvirt/libvirtd.conf`:
+Set the following in `/usr/local/etc/libvirt/libvirtd.conf`:
 ```
 unix_sock_dir = "/usr/local/var/run/libvirt"
+unix_sock_ro_perms = "0770"
+unix_sock_rw_perms = "0770"
+unix_sock_admin_perms = "0770"
 ```
+It is (unfortunately) not possible to use default launchd files provided by Homebrew
+because:
+
+a. there's only a single one for `libvirtd` (`virtlogd` & `virtlockd` are missing)
+b. the process gets launched under the current (unprivileged) user, which prevents libvirt
+   from exposing read-only socket
+
+therefore each process needs to be launched individually:
+
 ```shell
-brew services start libvirt
+sudo /usr/local/Cellar/libvirt/HEAD-ba88df7/sbin/libvirtd -f /usr/local/etc/libvirt/libvirtd.conf
+sudo /usr/local/Cellar/libvirt/HEAD-ba88df7/sbin/virtlockd -f /usr/local/etc/libvirt/virtlockd.conf
+sudo /usr/local/Cellar/libvirt/HEAD-ba88df7/sbin/virtlogd -f /usr/local/etc/libvirt/virtlogd.conf
 ```
 
 Now you're ready to install vagrant-libvirt using standard [Vagrant
