@@ -136,25 +136,24 @@ brew install qemu libvirt libiconv
 ```
 Set the following in `/usr/local/etc/libvirt/libvirtd.conf`:
 ```
-unix_sock_dir = "/usr/local/var/run/libvirt"
-unix_sock_ro_perms = "0770"
 unix_sock_rw_perms = "0770"
-unix_sock_admin_perms = "0770"
 ```
-It is (unfortunately) not possible to use default launchd files provided by Homebrew
-because:
+This ensures that an unprivileged (non-root) user under which Vagrant is most
+likely to run is able to connect to the socket.
 
-a. there's only a single one for `libvirtd` (`virtlogd` & `virtlockd` are missing)
-b. the process gets launched under the current (unprivileged) user, which prevents libvirt
-   from exposing read-only socket
-
-therefore each process needs to be launched individually:
+libvirtd itself needs to run as a privileged user as that is the only way
+to expose the R/O socket which this plugin uses.
 
 ```shell
-sudo /usr/local/Cellar/libvirt/HEAD-ba88df7/sbin/libvirtd -f /usr/local/etc/libvirt/libvirtd.conf
+sudo brew services start libvirtd
+```
+Lastly spin up the locking and logging daemon as both are also required by the plugin:
+```
 sudo /usr/local/Cellar/libvirt/HEAD-ba88df7/sbin/virtlockd -f /usr/local/etc/libvirt/virtlockd.conf
 sudo /usr/local/Cellar/libvirt/HEAD-ba88df7/sbin/virtlogd -f /usr/local/etc/libvirt/virtlogd.conf
 ```
+
+TODO: create launchd files for the two services ^ ?
 
 Now you're ready to install vagrant-libvirt using standard [Vagrant
 plugin](http://docs.vagrantup.com/v2/plugins/usage.html) installation methods.
